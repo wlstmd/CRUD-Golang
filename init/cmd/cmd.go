@@ -1,9 +1,25 @@
 package cmd
 
-type Cmd struct{}
+import (
+	"CRUD_SERVER/config"
+	"CRUD_SERVER/network"
+	"fmt"
+)
 
-func NewCmd() *Cmd {
-	c := &Cmd{}
+type Cmd struct {
+	config  *config.Config
+	network *network.Network
+}
+
+func NewCmd(filepath string) *Cmd {
+	c := &Cmd{
+		config:  config.NewConfig(filepath),
+		network: network.NewNetwork(),
+	}
+
+	fmt.Println(c.config.Server.Port)
+
+	c.network.ServerStart(c.config.Server.Port)
 
 	return c
 }
