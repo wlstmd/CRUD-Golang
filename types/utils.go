@@ -1,29 +1,15 @@
 package types
 
-type APIResponse struct {
-	Result      int64  `json:"result"`
-	Description string `json:"description"`
+type ApiResponse struct {
+	Result      int64       `json:"result"`
+	Description string      `json:"description"`
+	ErrCode     interface{} `json:"errCode"`
 }
 
-type CreateUserResponse struct {
-	*UserResponse
-}
-
-type GetUserResponse struct {
-	*UserResponse
-}
-
-type UpdateUserResponse struct {
-	*UserResponse
-}
-
-type DeleteUserResponse struct {
-	*UserResponse
-}
-
-func NewAPIResponse(description string, result int64) *APIResponse {
-	return &APIResponse{
+func NewAPIResponse(description string, result int64, errCode interface{}) *ApiResponse {
+	return &ApiResponse{
 		Result:      result,
 		Description: description,
+		ErrCode:     errCode,
 	}
 }

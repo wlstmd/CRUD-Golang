@@ -3,7 +3,6 @@ package network
 import (
 	"CRUD_SERVER/service"
 	"CRUD_SERVER/types"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"sync"
 )
@@ -38,45 +37,63 @@ func newUserRouter(router *Network, userService *service.User) *userRouter {
 // CRUD
 
 func (u *userRouter) create(c *gin.Context) {
-	fmt.Println("CREATE")
+	var req types.CreateRequest
 
-	u.router.okResponse(c, &types.CreateUserResponse{
-		UserResponse: &types.UserResponse{
-			APIResponse: types.NewAPIResponse("success", 1),
-			User:        nil,
-		},
-	})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else if err = u.userService.Create(req.ToUser()); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("success", 1, nil),
+		})
+	}
 }
 
 func (u *userRouter) get(c *gin.Context) {
-	fmt.Println("GET")
 
 	u.router.okResponse(c, &types.GetUserResponse{
-		UserResponse: &types.UserResponse{
-			APIResponse: types.NewAPIResponse("success", 1),
-			User:        nil,
-		},
+		ApiResponse: types.NewAPIResponse("success", 1, nil),
+		Users:       u.userService.Get(),
 	})
 }
 
 func (u *userRouter) update(c *gin.Context) {
-	fmt.Println("UPDATE")
+	var req types.UpdateUserRequest
 
-	u.router.okResponse(c, &types.UpdateUserResponse{
-		UserResponse: &types.UserResponse{
-			APIResponse: types.NewAPIResponse("success", 1),
-			User:        nil,
-		},
-	})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else if err = u.userService.Update(req.Name, req.UpdatedAge); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.DeleteUserResponse{
+			ApiResponse: types.NewAPIResponse("success", 1, nil),
+		})
+	}
 }
 
 func (u *userRouter) delete(c *gin.Context) {
-	fmt.Println("DELETE")
+	var req types.DeleteRequest
 
-	u.router.okResponse(c, &types.DeleteUserResponse{
-		UserResponse: &types.UserResponse{
-			APIResponse: types.NewAPIResponse("success", 1),
-			User:        nil,
-		},
-	})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else if err = u.userService.Delete(req.ToUser()); err != nil {
+		u.router.failedResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewAPIResponse("fail", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.DeleteUserResponse{
+			ApiResponse: types.NewAPIResponse("success", 1, nil),
+		})
+	}
 }
